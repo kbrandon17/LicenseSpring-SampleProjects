@@ -22,13 +22,13 @@ int main()
     options.collectNetworkInfo( true );
 
     std::shared_ptr<Configuration> pConfiguration = Configuration::Create(
-        EncryptStr( "afce72fb-9fba-406e-8d19-ffde5b0a7cad" ), // your LicenseSpring API key (UUID)
-        EncryptStr( "Qc8EdU7DY-gMI87-JMueZWXdtJ0Ek_hS6dGC_SwusO8" ), // your LicenseSpring Shared key
-        EncryptStr( "kw" ), // product code that you specified in LicenseSpring for your application
+        EncryptStr( "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" ), // your LicenseSpring API key (UUID)
+        EncryptStr( "XXXXXXXXX-XXXXX-XXXXXXXXXXXXX_XXXXXX_XXXXXX" ), // your LicenseSpring Shared key
+        EncryptStr( "XXXXXX" ), // product code that you specified in LicenseSpring for your application
         appName, appVersion, options );
     
     //Key-based implementation
-    auto licenseId = LicenseID::fromKey( "GPGW-2BYD-KVJK-CKKW" ); //input license key
+    auto licenseId = LicenseID::fromKey( "XXXX-XXXX-XXXX-XXXX" ); //input license key
 
     //For user-based implementation comment out above line, and use bottom 3 lines
  //   const std::string userId = "example@email.com"; //input user email
