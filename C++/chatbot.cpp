@@ -3,8 +3,6 @@
 #include <LicenseSpring/EncryptString.h>
 #include <LicenseSpring/LicenseManager.h>
 #include <LicenseSpring/Exceptions.h>
-#include <LicenseSpring/FloatingClient.h>
-#include <LicenseSpring/BaseManager.h>
 #include <iostream>
 #include <thread>
 
