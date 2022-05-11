@@ -464,7 +464,7 @@
   <ItemGroup>
     <ClCompile Include="..\AppConfig.cpp" />
     <ClCompile Include="KeyBasedSample.cpp" />
-    <ClCompile Include="chatbot.cpp" />
+    <ClCompile Include="chatbot.cpp" /> <!-- CHANGE THIS LINE IF YOU ARE USING ANOTHER TUTORIAL THAT ISN'T THE chatbot.cpp TUTORIAL-->
     <ClCompile Include="SampleBase.cpp" />
     <ClCompile Include="UserBasedSample.cpp" />
   </ItemGroup>
