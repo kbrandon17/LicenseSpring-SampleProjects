@@ -8,4 +8,6 @@ login.cpp - C++ Tutorial: Create simple mechanism for end users to "log in" to y
 
 offline.cpp - C++ Tutorial: Offline Licenses
 
+cf_dv.cpp - C++ Tutorial: Working with Custom Fields and Device Variables
+
 # The .vcxproj file will be updated as more sample projects and tutorials are created, more content coming soon!
