@@ -9,9 +9,11 @@ C++ Tutorial: Create simple mechanism for end users to "log in" to your applicat
 
 C++ Tutorial: Offline Licenses
 
+C++ Tutorial: Working with Custom Fields and Device Variables
+
 # Currently Working On:
 ## C++
-C++ Tutorial: Custom fields and device variables
+C++ Tutorial: Trial Licensing
 
 
 
