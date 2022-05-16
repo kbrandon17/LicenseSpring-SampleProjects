@@ -189,7 +189,7 @@ int main()
     try
     {
         license->sendDeviceVariables();
-        device_vec = license->getDeviceVariables( false );
+        device_vec = license->getDeviceVariables( true );
     }
     catch ( ... )
     {
