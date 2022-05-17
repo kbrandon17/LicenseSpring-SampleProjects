@@ -6,7 +6,7 @@ Currently a work in progress. More samples are being worked on and will be pushe
 
 <details> 
 <summary>C++ Tutorials</summary>
-<br> C++ Tutorial: Basic getting up and running with the SDK - Code [here](C++/chatbot.cpp) 
+<br> C++ Tutorial: Basic getting up and running with the SDK - Code <a href="/C++/chatbo.cpp">Here</a>
 <br> C++ Tutorial: Create simple mechanism for end users to "log in" to your application
 <br> C++ Tutorial: Offline Licenses
 <br> C++ Tutorial: Working with Custom Fields and Device Variables
