@@ -40,6 +40,8 @@ int main()
  //   const std::string userId = "example@email.com"; //input user email
  //   const std::string userPassword = "password"; //input user password
  //   auto licenseId = LicenseID::fromUser( userId, userPassword );
+    
+    std::shared_ptr<LicenseManager> licenseManager = LicenseManager::create( pConfiguration );
 
     License::ptr_t license = nullptr;
 
