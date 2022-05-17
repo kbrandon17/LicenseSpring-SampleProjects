@@ -8,8 +8,7 @@
 using namespace LicenseSpring;
 
 //Code sample for creating a trial license. 
-//Not finished yet, Waiting on response on how user-based trial licenses should work.
-//We are getting LicenseSpringInternalException when we run it on user-based.
+//Note, for user-based trials, you need to make sure the user account is still using thier initial password, and not a changed password.
 int main()
 {
     std::string appName = "NAME"; //input name of application
@@ -20,10 +19,10 @@ int main()
     options.collectNetworkInfo( true );
 
     std::shared_ptr<Configuration> pConfiguration = Configuration::Create(
-        EncryptStr("XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"), // your LicenseSpring API key (UUID)
-        EncryptStr("XXXXXXXXX-XXXXX-XXXXXXXXXXXXX_XXXXXX_XXXXXX"), // your LicenseSpring Shared key
-        EncryptStr("XXXXXX"), // product code that you specified in LicenseSpring for your application
-        appName, appVersion, options);
+        EncryptStr( "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" ), // your LicenseSpring API key (UUID)
+        EncryptStr( "XXXXXXXXX-XXXXX-XXXXXXXXXXXXX_XXXXXX_XXXXXX" ), // your LicenseSpring Shared key
+        EncryptStr( "XXXXXX" ), // product code that you specified in LicenseSpring for your application
+        appName, appVersion, options );
 
     std::shared_ptr<LicenseManager> licenseManager = LicenseManager::create( pConfiguration );
 
