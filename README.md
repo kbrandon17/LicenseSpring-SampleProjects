@@ -11,9 +11,15 @@ C++ Tutorial: Offline Licenses
 
 C++ Tutorial: Working with Custom Fields and Device Variables
 
+C++ Tutorial: Working with Trial Licenses
+
+C++ Tutorial: Storing and Collecting Device Information Back to LicenseSpring (This tutorial has no sample code)
+
+C++ Tutorial: Working with Consumption-based Licenses
+
 # Currently Working On:
 ## C++
-C++ Tutorial: Trial Licensing
+C++ Tutorial: How to turn on and use logging
 
 
 
