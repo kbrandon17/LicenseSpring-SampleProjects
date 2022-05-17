@@ -10,4 +10,8 @@ offline.cpp - C++ Tutorial: Offline Licenses
 
 cf_dv.cpp - C++ Tutorial: Working with Custom Fields and Device Variables
 
+trial.cpp - C++ Tutorial: Working with Trial Licenses
+
+consumption.cpp - C++ Tutorial: Working with Consumption-based Licenses
+
 # The .vcxproj file will be updated as more sample projects and tutorials are created, more content coming soon!
