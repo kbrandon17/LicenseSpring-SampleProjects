@@ -5,17 +5,20 @@
 #include <iostream>
 #include <thread>
 
-//These headers are only necessary for the fibonacci functions below.
+//These headers are only necessary for the fibonacci/prime functions below.
 #include <string>
 #include <time.h>
+#include <cmath>
 
 using namespace LicenseSpring;
 int fib( int n );
 void fib_game( int max_term );
+bool isPrime( int num );
 
 //Sample code for features licensing. To test feature consumption, our feature will be a fibonacci calculator.
 //Using the fibonacci calculator will cost you one consumption. For our feature activation, we will have a 
-//fibonacci game. Only the max activation amount of people will be able to use the game at any point.
+//fibonacci game. Only the max activation amount of people will be able to use the game at any point. 
+//Finally, we'll have a prime calculator to demonstrate local consumptions.
 int main()
 {
     
@@ -31,7 +34,7 @@ int main()
         EncryptStr( "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" ), // your LicenseSpring API key (UUID)
         EncryptStr( "XXXXXXXXX-XXXXX-XXXXXXXXXXXXX_XXXXXX_XXXXXX" ), // your LicenseSpring Shared key
         EncryptStr( "XXXXXX" ), // product code that you specified in LicenseSpring for your application
-        appName, appVersion, options);
+        appName, appVersion, options );
 
     //Key-based implementation
     auto licenseId = LicenseID::fromKey( "XXXX-XXXX-XXXX-XXXX" ); //input license key
@@ -40,7 +43,7 @@ int main()
  //   const std::string userId = "example@email.com"; //input user email
  //   const std::string userPassword = "password"; //input user password
  //   auto licenseId = LicenseID::fromUser( userId, userPassword );
-    
+
     std::shared_ptr<LicenseManager> licenseManager = LicenseManager::create( pConfiguration );
 
     License::ptr_t license = nullptr;
@@ -57,16 +60,16 @@ int main()
         return 0;
     }
     
-    //If we don't have a local license yet, we'll try activating it first. Otherwise we'll do an online
-    //check to sync up our license with the backend. Note, if you recently reset your license, then you may get
+    //If we don't have a local license yet, we'll try activating it first. 
+    // Note, if you recently reset your license, then you may get
     //an exception here. You can fix this by deleting your local license folder located at 
-    //C:\Users\%USERPROFILE%\AppData\Local\LicenseSpring\'product code'.
+    //C:\Users\%USERPROFILE%\AppData\Local\LicenseSpring\'product code'. 
+    //You may then get a nullptr access exception, but if you run a it a second time, it'll work fine.
+    //We'll look more into this bug and add it here if we figure out what's causing it.
     try
     {
         if ( license == nullptr )
             licenseManager->activateLicense( licenseId );
-        else
-            license->check();
 
         //We'll do a local check right after just to make sure everything is working properly.
         license->localCheck();
@@ -78,18 +81,20 @@ int main()
         std::cout << ex.what() << std::endl;
         return 0;
     }
-    
+
     std::string sInput = "";
     
     while ( sInput.compare( "e" ) != 0 )
     {
         std::cout << "To test our product feature 1: fibonacci calculator, type '1'." << std::endl;
         std::cout << "To test our product feature 2: fibonacci game, type '2'." << std::endl;
+        std::cout << "To test our product feature 3: prime checker, type '3'." << std::endl;
         std::cout << "To exit, type 'e'." << std::endl;
         std::cout << ">";
         std::getline( std::cin, sInput );
 
         //This is our example for our first feature, a fibonacci calculator (see code at bottom for description)
+        //Here we'll demonstrate a consumption feature using total consumption. 
         if ( sInput.compare( "1" ) == 0 )
         {
             try
@@ -102,7 +107,7 @@ int main()
                 //will delete itself from the platform, so this isExpired() check is a bit redundant. But, 
                 //this is a good demonstratation of what you could do for offline cases, and how to check
                 //expiry date without using syncFeatureConsumption.
-                if (feature1.isExpired())
+                if ( feature1.isExpired() )
                 {
                     std::cout << "This feature is expired." << std::endl;
                     continue;
@@ -130,6 +135,14 @@ int main()
                     std::cout << "You have " << feature1.maxConsumption() - feature1.totalConsumption() <<
                         " consumptions left on this feature, before you are in the overage territory." << std::endl;
                 }
+
+                //Here we can check whether we are out of consumptions and if so, we can throw this exception 
+                //with this message.
+                if ( feature1.totalConsumption() >= feature1.maxConsumption() ) 
+                {
+                    throw NotEnoughConsumptionException( "Not enough consumption left" );
+                }
+
                 std::cout << "Input a fibonacci term to calculate..." << std::endl;
                 std::cout << ">";
 
@@ -142,6 +155,7 @@ int main()
                 //count for this feature. The 'true' field means we save the newly updated consumption count to 
                 //our local license file as well.
                 license->updateFeatureConsumption( "XXXXXX", 1, true ); //Input consumption feature code
+                license->syncFeatureConsumption( "XXXXXX" ); //Input consumption feature code
             }
             catch ( NotEnoughConsumptionException ) //This exception is pretty useful to find out when you are out of consumptions
             {
@@ -168,42 +182,108 @@ int main()
             
         }
         //This is our example for our second feature: a fibonacci game (see code at bottom for description)
-        //It is the exact same as the code above, but we use a different feature code, and instead of using our
-        //fibonacci calculator at the end, we'll use our game.
+        //This time we'll do a activation feature. We can achieve this by hardcoding our feature code in, 
+        //but this feature will only be available once we add it to our license.
         else if ( sInput.compare( "2" ) == 0 ) 
         {
             try
             {
-                license->syncFeatureConsumption( "XXXXXX" );
-                LicenseFeature feature2 = license->feature( "XXXXXX" );
+                //Here we'll run a check to sync up our license with the backend, in case we recently added
+                //our feature. Note, that running check will also sync up our total consumptions for 
+                //feature 3, which will affect how local consumptions work. See [link to tutorial here]
+                //for more details on why this could happen.
+                license->check(); 
+                //If our feature code cannot be found on our local license, we'll throw an 
+                //InvalidLicenseFeatureExample. There we can let the user know they don't currently
+                //have access to this feature on their license, and what they can do to add the feature.
+                LicenseFeature feature2 = license->feature( "XXXXXX" ); //Input feature code
 
-                if (feature2.isExpired())
+                //This is just added so that a consumption-based feature with the same feature code 
+                //doesn't accidentally get used.
+                if ( feature2.featureType() != FeatureTypeActivation ) 
+                {
+                    std::cout << "This feature is for activation testing purposes only."
+                        << "make sure your feature code is for an activation feature." << std::endl;
+                    continue;
+                }
+
+                //Here we'll check if our feature has expired, just in case we haven't synced up with
+                //the server-side in a while.
+                if ( feature2.isExpired() )
                 {
                     std::cout << "This feature is expired." << std::endl;
                     continue;
                 }
                 
-                std::cout << "You have a total of: " << feature2.totalConsumption() << " consumptions used so far on this feature." << std::endl;
+                std::cout << "Starting fibonacci game..." << std::endl;
 
-                if ( feature2.totalConsumption() > feature2.maxConsumption() )
+                fib_game( 20 ); //Change this parameter to make the range of terms even bigger.
+
+            }
+            catch ( InvalidLicenseFeatureException ) //This is what will happen if our feature has not been added to the license
+            {
+                std::cout << "You do not have access to this feature on your license. "
+                    << "To add this feature, (tell user what steps to do to unlock this feature." << std::endl;
+            }
+            catch ( LicenseSpringException ex )
+            {
+                std::cout << ex.what() << std::endl;
+                return 0;
+            }
+        }
+        //This is our example for our third feature, a prime checker. It will tell you whether the 
+        //int you inputted is prime or not.
+        //We will use another consumption-based feature, but this time we'll use local consumption.
+        //If you test this on 2 devices, you'll find that both consumptions counts increment independently
+        //of one another, and that the server does not actually update with any of these values, 
+        //unless you call syncFeatureConsumption.
+        else if ( sInput.compare( "3" ) == 0 )
+        {
+            try
+            {
+                //license->syncFeatureConsumption( "XXXXXX" ); //Input feature code
+                LicenseFeature feature3 = license->feature( "XXXXXX" ); //Input feature code
+
+                if ( feature3.isExpired() )
+                {
+                    std::cout << "This feature is expired." << std::endl;
+                    continue;
+                }
+
+                std::cout << "You have a total of: " << feature3.localConsumption() << " consumptions used so far on this feature." << std::endl;
+
+                if ( feature3.localConsumption() > feature3.maxConsumption() )
                 {
                     //This is the case where the user is in the max-overages. You can do something special in this case
                     //, or just notify the user they are in the max-overages.
                     std::cout << "You are currently using max overages." << std::endl;
-                    std::cout << "You are currently " << feature2.totalConsumption() - feature2.maxConsumption() <<
+                    std::cout << "You are currently " << feature3.localConsumption() - feature3.maxConsumption() <<
                         " consumptions over on this feature." << std::endl;
                 }
                 else
                 {
                     //If the user is not in max overages, you can have your normal code.
-                    std::cout << "You have " << feature2.maxConsumption() - feature2.totalConsumption() <<
+                    std::cout << "You have " << feature3.maxConsumption() - feature3.localConsumption() <<
                         " consumptions left on this feature, before you are in the overage territory." << std::endl;
                 }
-                std::cout << "Starting fibonacci game..." << std::endl;
-                fib_game( 20 );
-                license->updateFeatureConsumption( "XXXXXX", 1, true );
+
+                if ( feature3.localConsumption() >= feature3.maxConsumption() ) 
+                {
+                    throw NotEnoughConsumptionException("Not enough consumption left");
+                }
+            
+                std::cout << "Input an integer to check if it is prime." << std::endl;
+                std::cout << ">";
+
+                //Here we'll implement our feature, which is a fibonacci calculator. 
+                std::string prime_string = "";
+                std::getline( std::cin, prime_string );
+                std::cout << ( isPrime( stoi( prime_string ) ) ? "Prime" : "Not Prime" ) << std::endl;
+
+                license->updateFeatureConsumption( "XXXXXX", 1, true ); //Input feature code
+                //license->syncFeatureConsumption( "XXXXXX" ); //Input feature code
             }
-            catch ( NotEnoughConsumptionException ) 
+            catch ( NotEnoughConsumptionException )
             {
                 std::cout << "You are out of consumptions on this feature. "
                     << "Please reset for more consumptions on this feature." << std::endl;
@@ -213,6 +293,10 @@ int main()
                 std::cout << "Could not find feature. Feature does not exist. "
                     << "Please make sure you inputted the correct feature code and that your feature "
                     << "exists on your license." << std::endl;
+            }
+            catch (std::invalid_argument) //This exception is because we used stoi(string)
+            {
+                std::cout << "Please input a valid number." << std::endl;
             }
             catch ( LicenseSpringException ex )
             {
@@ -288,12 +372,42 @@ void fib_game( int max_term )
                 std::cout << "Next term: " << std::endl;
             }
         }
-        catch (std::invalid_argument)
+        catch ( std::invalid_argument )
         {
             std::cout << "Invalid argument, please try again with a number next time." << std::endl;
             std::cout << "Exiting game, try to be better next time..." << std::endl;
             return;
         }
         
+    }
+}
+
+//Prime number calculator. Pass a positive int, and it'll return a boolean, true for a prime and false otherwise.
+bool isPrime( int num )
+{
+    if ( num < 2 )
+    {
+        return false;
+    }
+    else if ( num == 2 )
+    {
+        return true;
+    }
+    else
+    {
+        if ( num % 2 == 0 ) 
+        {
+            return false;
+        }
+        int halfway = ceil( sqrt( num ) );
+
+        for ( int i = 3; i <= halfway; i++ )
+        {
+            if ( num % i == 0 )
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }
