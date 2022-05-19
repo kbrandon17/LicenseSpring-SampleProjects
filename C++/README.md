@@ -16,4 +16,6 @@ consumption.cpp - C++ Tutorial: Working with Consumption-based Licenses
 
 features.cpp - C++ Tutorial: Working with Feature Licenses 
 
+versions.cpp - C++ Tutorial: Handling Product Versioning within LicenseSpring
+
 # The .vcxproj file will be updated as more sample projects and tutorials are created, more content coming soon!
