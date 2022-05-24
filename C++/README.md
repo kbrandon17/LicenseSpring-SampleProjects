@@ -18,4 +18,6 @@ features.cpp - C++ Tutorial: Working with Feature Licenses
 
 version.cpp - C++ Tutorial: Handling Product Versioning within LicenseSpring
 
-# The .vcxproj file will be updated as more sample projects and tutorials are created, more content coming soon!
+floating_cloud.cpp - C++ Tutorial: Setting up concurrency with Floating Cloud
+
+# Note if, any of these code samples are not working on your device, make sure you're header files are all properly linked, you are on the correct/most recent SDK, and you updated your .vcxproj file to compile the sample code you are currently testing. 
