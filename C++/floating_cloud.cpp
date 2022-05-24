@@ -61,7 +61,7 @@ int main()
     try
     {
         if ( license == nullptr )
-            licenseManager->activateLicense(licenseId);
+            license = licenseManager->activateLicense(licenseId);
 
         //We'll do a local check right after just to make sure everything is working properly.
         license->localCheck();
