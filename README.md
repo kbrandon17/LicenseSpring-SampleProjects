@@ -1,6 +1,8 @@
 # LicenseSpring-SampleProjects
 Code samples that can help you integrate the LicenseSpring SDK into your code. 
 
+Here we will create multiple sample code, and link tutorials on what they do and how they can be used. Hopefully, they can help you answer any questions you may have on how to add the LicenseSpring SDK's into your project. These tutorials will go through the basics, as well as some more complicated topics, so that any developer can apply what they've learned from the sample code into their own code.
+
 Currently a work in progress. More samples are being worked on and will be pushed when finished. 
 
 # Available Tutorials/Sample Code:
