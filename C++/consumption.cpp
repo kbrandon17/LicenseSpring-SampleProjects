@@ -57,7 +57,7 @@ int main()
     try
     {
         if ( license == nullptr )
-            licenseManager->activateLicense( licenseId );
+            license = licenseManager->activateLicense( licenseId );
         else
             license->check();
 
