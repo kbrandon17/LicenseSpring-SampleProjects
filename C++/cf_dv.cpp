@@ -84,7 +84,7 @@ int main()
     //custom fields and device variables.
     try 
     {
-        licenseManager->activateLicense( licenseId );
+        license = licenseManager->activateLicense( licenseId );
         
     }
     catch ( ProductNotFoundException )
