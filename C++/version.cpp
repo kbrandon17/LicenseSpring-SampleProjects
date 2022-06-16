@@ -9,7 +9,7 @@
 #include <thread>
 #include <LicenseSpring/InstallationFile.h>
 
-#pragma warning(disable : 4996)
+#pragma warning( disable : 4996 )
 
 using namespace LicenseSpring;
 
@@ -20,21 +20,21 @@ void LicenseCheck( License::ptr_t license );
 int main()
 {
     std::string appName = "NAME"; //input name of application
-    std::string appVersion = "1.0.0.0"; //input version of application
+    std::string appVersion = "VERSION"; //input version of application
 
     //Collecting network info
     ExtendedOptions options;
     options.collectNetworkInfo( true );
     options.enableLogging( true );
 
-    std::shared_ptr<Configuration> pConfiguration = Configuration::Create(
-        EncryptStr( "afce72fb-9fba-406e-8d19-ffde5b0a7cad" ), // your LicenseSpring API key (UUID)
-        EncryptStr( "Qc8EdU7DY-gMI87-JMueZWXdtJ0Ek_hS6dGC_SwusO8" ), // your LicenseSpring Shared key
-        EncryptStr( "kw" ), // product code that you specified in LicenseSpring for your application
+    std::shared_ptr<Configuration> pConfiguration = Configuration::Create( 
+        EncryptStr( "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" ), // your LicenseSpring API key ( UUID )
+        EncryptStr( "XXXXXXXXX-XXXXX-XXXXXXXXXXXXX_XXXXXX_XXXXXX" ), // your LicenseSpring Shared key
+        EncryptStr( "XXXXXX" ), // product code that you specified in LicenseSpring for your application
         appName, appVersion, options );
 
     //Key-based implementation
-    auto licenseId = LicenseID::fromKey( "GPGW-2BYD-KVJK-CKKW" ); //input license key
+    auto licenseId = LicenseID::fromKey( "XXXX-XXXX-XXXX-XXXX" ); //input license key
 
     auto licenseManager = LicenseManager::create( pConfiguration );
 
@@ -87,7 +87,7 @@ int main()
 
     std::string sInput = "";
 
-    while (sInput.compare( "e" ) != 0)
+    while ( sInput.compare( "e" ) != 0 )
     {
         std::cout << "Press 1 to list product versions, 2 to get product version installation file, 3 to check for newest version, or e to exit." << std::endl;
         std::cout << ">";
@@ -147,20 +147,25 @@ int main()
             }
             
         }
-        else if (sInput.compare("3") == 0)
+        //Inputting '3' will automatically check if the license is within a maintenance period, and if not it checks for whether
+        //the application is being run on the newest version. If not, the program prompts the user to update by giving the url.
+        else if ( sInput.compare( "3" ) == 0 )
         {
-            LicenseCheck(license);
+            //After checking the license to confirm its accuracy, the maintenance period time is stored.
+            LicenseCheck( license );
             struct tm time = license->maintenancePeriod();
-            time_t t = mktime(&time);
-            if(license->isMaintenancePeriodExpired() || ctime(&t) == NULL) 
+            time_t t = mktime( &time );
+            //If the maintenance period is in the past or was never set (by default maintenance period is NULL)
+            if( license->isMaintenancePeriodExpired() || ctime( &t ) == NULL ) 
             {
-                InstallationFile::ptr_t ins = licenseManager->getInstallationFile(licenseId);
-                if ((ins->version()).compare(pConfiguration->getAppVersion()) != 0) //the current versions is older than ins
+                //Retrieving the newest version available 
+                InstallationFile::ptr_t ins = licenseManager->getInstallationFile( licenseId );
+                //If the current application version being run is not equal to the newest version available.
+                if ( ( ins->version() ).compare( pConfiguration->getAppVersion() ) != 0 )
                 {
                     std::cout << "You are currently on version " << pConfiguration->getAppVersion() << ", which is outdated." << std::endl;
                     std::cout << "The most recent version, " << ins->version() << ", is available now on the " << ins->channel() << " channel." << std::endl;
                     std::cout << "To download this new version or see other product versions, follow this URL: " << ins->url() << std::endl;
-                 //   std::cout << "You are currently running version " << insog->version() << ", on the " << insog->channel() << " channel." << std::endl;
                 }
                 else
                 {
@@ -169,42 +174,11 @@ int main()
             }
             else
             {
-                printf("Currently under maintenance!\n");
-                printf("Maintenance will be finished at %s\n", ctime(&t));
-                continue;
+                printf( "Currently under maintenance!\n" );
+                printf( "Maintenance will be finished at %s\n", ctime( &t ) );
             }
-            /*
-            std::string vInput = "";
-            std::cout << "Input the version number you want to switch to: " << std::endl;
-            std::getline(std::cin, vInput);
-            try
-            {
-                InstallationFile::ptr_t ins = licenseManager->getInstallationFile(licenseId, vInput);
-                std::cout << "The URL for this installation file is: " << ins->url() << std::endl;
-            }
-            catch (ProductVersionException)
-            {
-                std::cout << "Version not found." << std::endl;
-            }
-            catch (ProductNotFoundException)
-            {
-                std::cout << "Product not found." << std::endl;
-            }
-            catch (LicenseNotFoundException)
-            {
-                std::cout << "License not found." << std::endl;
-            }
-            catch (LicenseStateException)
-            {
-                std::cout << "License disabled." << std::endl;
-            }
-            catch (...)
-            {
-                std::cout << "Network error with receiving product version installation file." << std::endl;
-            }
-            */
         }
-
+        // If 'e' is input we exit the program
         else
             if ( sInput.compare( "e" ) != 0 )
                 std::cout << "Unrecognized command." << std::endl;
@@ -216,7 +190,7 @@ void LicenseCheck( License::ptr_t license )
 {
     //First we'll run a online check. This will check your license on the 
     //LicenseSpring servers, and sync up your local license to match your online
-    if (license != nullptr)
+    if ( license != nullptr )
     {
         try
         {
