@@ -9,6 +9,8 @@
 #include <thread>
 #include <LicenseSpring/InstallationFile.h>
 
+#pragma warning(disable : 4996)
+
 using namespace LicenseSpring;
 
 //License Checking function at bottom of code. Shows how to do an online check and sync, as well as a local check.
@@ -18,7 +20,7 @@ void LicenseCheck( License::ptr_t license );
 int main()
 {
     std::string appName = "NAME"; //input name of application
-    std::string appVersion = "VERSION"; //input version of application
+    std::string appVersion = "1.0.0.0"; //input version of application
 
     //Collecting network info
     ExtendedOptions options;
@@ -26,9 +28,9 @@ int main()
     options.enableLogging( true );
 
     std::shared_ptr<Configuration> pConfiguration = Configuration::Create(
-        EncryptStr( "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" ), // your LicenseSpring API key (UUID)
-        EncryptStr( "XXXXXXXXX-XXXXX-XXXXXXXXXXXXX_XXXXXX_XXXXXX" ), // your LicenseSpring Shared key
-        EncryptStr( "XXXXXX" ), // product code that you specified in LicenseSpring for your application
+        EncryptStr( "afce72fb-9fba-406e-8d19-ffde5b0a7cad" ), // your LicenseSpring API key (UUID)
+        EncryptStr( "Qc8EdU7DY-gMI87-JMueZWXdtJ0Ek_hS6dGC_SwusO8" ), // your LicenseSpring Shared key
+        EncryptStr( "kw" ), // product code that you specified in LicenseSpring for your application
         appName, appVersion, options );
 
     //Key-based implementation
@@ -87,7 +89,7 @@ int main()
 
     while (sInput.compare( "e" ) != 0)
     {
-        std::cout << "Press 1 to list product versions, 2 to get product version installation file, or e to exit." << std::endl;
+        std::cout << "Press 1 to list product versions, 2 to get product version installation file, 3 to check for newest version, or e to exit." << std::endl;
         std::cout << ">";
         std::getline( std::cin, sInput );
 
@@ -145,6 +147,63 @@ int main()
             }
             
         }
+        else if (sInput.compare("3") == 0)
+        {
+            LicenseCheck(license);
+            struct tm time = license->maintenancePeriod();
+            time_t t = mktime(&time);
+            if(license->isMaintenancePeriodExpired() || ctime(&t) == NULL) 
+            {
+                InstallationFile::ptr_t ins = licenseManager->getInstallationFile(licenseId);
+                if ((ins->version()).compare(pConfiguration->getAppVersion()) != 0) //the current versions is older than ins
+                {
+                    std::cout << "You are currently on version " << pConfiguration->getAppVersion() << ", which is outdated." << std::endl;
+                    std::cout << "The most recent version, " << ins->version() << ", is available now on the " << ins->channel() << " channel." << std::endl;
+                    std::cout << "To download this new version or see other product versions, follow this URL: " << ins->url() << std::endl;
+                 //   std::cout << "You are currently running version " << insog->version() << ", on the " << insog->channel() << " channel." << std::endl;
+                }
+                else
+                {
+                    std::cout << "You are currently running the most recent version of the product." << std::endl;
+                }
+            }
+            else
+            {
+                printf("Currently under maintenance!\n");
+                printf("Maintenance will be finished at %s\n", ctime(&t));
+                continue;
+            }
+            /*
+            std::string vInput = "";
+            std::cout << "Input the version number you want to switch to: " << std::endl;
+            std::getline(std::cin, vInput);
+            try
+            {
+                InstallationFile::ptr_t ins = licenseManager->getInstallationFile(licenseId, vInput);
+                std::cout << "The URL for this installation file is: " << ins->url() << std::endl;
+            }
+            catch (ProductVersionException)
+            {
+                std::cout << "Version not found." << std::endl;
+            }
+            catch (ProductNotFoundException)
+            {
+                std::cout << "Product not found." << std::endl;
+            }
+            catch (LicenseNotFoundException)
+            {
+                std::cout << "License not found." << std::endl;
+            }
+            catch (LicenseStateException)
+            {
+                std::cout << "License disabled." << std::endl;
+            }
+            catch (...)
+            {
+                std::cout << "Network error with receiving product version installation file." << std::endl;
+            }
+            */
+        }
 
         else
             if ( sInput.compare( "e" ) != 0 )
@@ -162,7 +221,7 @@ void LicenseCheck( License::ptr_t license )
         try
         {
             std::cout << "Checking license online..." << std::endl;
-
+            license->check();
             std::cout << "License successfully checked" << std::endl;
         }
         catch ( LicenseStateException )
