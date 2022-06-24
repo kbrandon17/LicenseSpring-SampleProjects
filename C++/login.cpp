@@ -9,7 +9,12 @@
 #include <thread>
 
 using namespace LicenseSpring;
+//email: william.gong@licensespring.com
+//password: test1234
 
+//email: kyle.brandon@licensespring.com
+//password: kbtest123
+// 
 //License Checking function at bottom of code. Shows how to do an online check and sync, as well as a local check.
 void LicenseCheck( License::ptr_t license );
 
@@ -24,9 +29,9 @@ int main()
     options.collectNetworkInfo( true );
 
     std::shared_ptr<Configuration> pConfiguration = Configuration::Create(
-        EncryptStr( "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" ), // your LicenseSpring API key (UUID)
-        EncryptStr( "XXXXXXXXX-XXXXX-XXXXXXXXXXXXX_XXXXXX_XXXXXX" ), // your LicenseSpring Shared key
-        EncryptStr( "XXXXXX" ), // product code that you specified in LicenseSpring for your application
+        EncryptStr( "afce72fb-9fba-406e-8d19-ffde5b0a7cad" ), // your LicenseSpring API key (UUID)
+        EncryptStr( "Qc8EdU7DY-gMI87-JMueZWXdtJ0Ek_hS6dGC_SwusO8" ), // your LicenseSpring Shared key
+        EncryptStr( "demo" ), // product code that you specified in LicenseSpring for your application
         appName, appVersion, options );
 
     auto licenseManager = LicenseManager::create( pConfiguration );
@@ -115,9 +120,45 @@ int main()
             //We'll create a licenseID and if the credentials are valid, we'll 
             //activate their license and log them in.
             auto licenseId = LicenseID::fromUser( email, password );
-            try 
+            try
             {
-                license = licenseManager->activateLicense( licenseId );
+                license = licenseManager->activateLicense(licenseId);
+                LicenseUser::ptr_t user = license->licenseUser();
+                if (user->isInitialPassword())
+                {
+                    std::cout << "This account still uses an initial password, type 'y' to set your password." << std::endl;
+                    std::string inp = "";
+                    std::getline(std::cin, inp);
+                    if (inp.compare("y") == 0)
+                    {
+                        std::cout << "Changing passwords:" << std::endl;
+                        std::cout << "Please enter initial password: " << std::endl;
+                        std::string old_pass = "";
+                        std::getline(std::cin, old_pass);
+                        std::cout << "Please enter new password: " << std::endl;
+                        std::string new_pass = "";
+                        std::getline(std::cin, new_pass);
+                        std::cout << "Please retype new password: " << std::endl;
+                        std::string re_new_pass = "";
+                        std::getline(std::cin, re_new_pass);
+                        if (new_pass != re_new_pass)
+                        {
+                            std::cout << "Passwords do not match." << std::endl;
+                        }
+                        else
+                        {
+                            //We'll check if their old password is correct, and change their password if it is.
+                            if (license->changePassword(old_pass, new_pass))
+                            {
+                                std::cout << "Password change accepted. New password: " << new_pass << std::endl;
+                            }
+                            else
+                            {
+                                std::cout << "Password change failed." << std::endl;
+                            }
+                        }
+                    }
+                }
             }
             catch ( ProductNotFoundException )
             {
