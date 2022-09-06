@@ -9,11 +9,7 @@
 #include <thread>
 
 using namespace LicenseSpring;
-//email: william.gong@licensespring.com
-//password: test1234
 
-//email: kyle.brandon@licensespring.com
-//password: kbtest123
 // 
 //License Checking function at bottom of code. Shows how to do an online check and sync, as well as a local check.
 void LicenseCheck( License::ptr_t license );
@@ -29,9 +25,9 @@ int main()
     options.collectNetworkInfo( true );
 
     std::shared_ptr<Configuration> pConfiguration = Configuration::Create(
-        EncryptStr( "afce72fb-9fba-406e-8d19-ffde5b0a7cad" ), // your LicenseSpring API key (UUID)
-        EncryptStr( "Qc8EdU7DY-gMI87-JMueZWXdtJ0Ek_hS6dGC_SwusO8" ), // your LicenseSpring Shared key
-        EncryptStr( "demo" ), // product code that you specified in LicenseSpring for your application
+        EncryptStr( "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX" ), // your LicenseSpring API key (UUID)
+        EncryptStr( "XXXXXXXX-XXXXX-XXXXXXXXXXXX_XXXXXX_XXXXXX" ), // your LicenseSpring Shared key
+        EncryptStr( "XXXXXXXXX" ), // product code that you specified in LicenseSpring for your application
         appName, appVersion, options );
 
     auto licenseManager = LicenseManager::create( pConfiguration );
